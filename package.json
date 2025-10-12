@@ -6,6 +6,7 @@
   },
   "scripts": {
     "build": "tsc",
+    "dev": "sam local start-api -t ./cdk.out/SaunaAppStack.template.json",
     "watch": "tsc -w",
     "test": "jest",
     "cdk": "cdk"
