@@ -1,0 +1,15 @@
+{
+    "TableName": "SaunaTable",
+    "KeySchema": [
+      { "AttributeName": "Id", "KeyType": "HASH" },
+      { "AttributeName": "Date", "KeyType": "RANGE" }
+    ],
+    "AttributeDefinitions": [
+      { "AttributeName": "Id", "AttributeType": "S" },
+      { "AttributeName": "Date", "AttributeType": "S" }
+    ],
+    "ProvisionedThroughput": {
+      "ReadCapacityUnits": 1,
+      "WriteCapacityUnits": 1
+    }
+}

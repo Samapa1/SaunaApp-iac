@@ -13,7 +13,19 @@ export class SaunaAppStack extends Stack {
     const myLambda = new lambda.Function(this, 'MyFunction', {
       runtime: lambda.Runtime.NODEJS_20_X,
       handler: 'app.lambda_handler',
-      code: lambda.Code.fromAsset('./my_function/lib'),
+      code: lambda.Code.fromAsset('./functions/my_function/lib'),
+    });
+
+    const reservations = new lambda.Function(this, 'Reservations', {
+      runtime: lambda.Runtime.NODEJS_20_X,
+      handler: 'app.lambda_handler',
+      code: lambda.Code.fromAsset('./functions/get_reservations/lib'),
+    });
+
+    const makeReservation = new lambda.Function(this, 'MakeReservation', {
+      runtime: lambda.Runtime.NODEJS_20_X,
+      handler: 'app.make_reservation',
+      code: lambda.Code.fromAsset('./functions/make_reservations/lib'),
     });
 
   // Create an API Gateway
@@ -31,13 +43,26 @@ export class SaunaAppStack extends Stack {
     });
 
     const templateLambdaIntegration = new HttpLambdaIntegration('TemplateIntegration', myLambda);
+    const reservationsLambdaIntegration = new HttpLambdaIntegration('ReservationsLambdaIntegration', reservations);
+    const makeReservationLambdaIntegration = new HttpLambdaIntegration('MakeReservationLambdaIntegration', makeReservation);
 
     // Create a resource and method for the API
     httpApi.addRoutes({
         path: '/invoke',
         methods: [ HttpMethod.GET],
         integration: templateLambdaIntegration,
+    })
 
+    httpApi.addRoutes({
+        path: '/reservations',
+        methods: [ HttpMethod.GET],
+        integration: reservationsLambdaIntegration,
+    })
+
+    httpApi.addRoutes({
+      path: '/reservation',
+      methods: [ HttpMethod.POST],
+      integration: makeReservationLambdaIntegration,
     })
 
     // Output the API endpoint URL

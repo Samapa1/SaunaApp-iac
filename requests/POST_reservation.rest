@@ -1,0 +1,10 @@
+POST http://127.0.0.1:3000/reservation
+
+content-type: application/json
+
+{
+    "sauna": "1",
+    "date": "19-10-25-18"
+}
+
+# --payload '{ "key": "value" }'
