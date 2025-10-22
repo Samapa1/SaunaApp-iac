@@ -1,0 +1,1 @@
+DELETE http://127.0.0.1:3000/reservation?sauna=3&date=31-10-25-20

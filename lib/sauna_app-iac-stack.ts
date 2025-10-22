@@ -9,13 +9,7 @@ export class SaunaAppStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
-  // Create a Lambda function
-    const myLambda = new lambda.Function(this, 'MyFunction', {
-      runtime: lambda.Runtime.NODEJS_20_X,
-      handler: 'app.lambda_handler',
-      code: lambda.Code.fromAsset('./functions/my_function/lib'),
-    });
-
+  // Create Lambda functions
     const reservations = new lambda.Function(this, 'Reservations', {
       runtime: lambda.Runtime.NODEJS_20_X,
       handler: 'app.lambda_handler',
@@ -26,6 +20,12 @@ export class SaunaAppStack extends Stack {
       runtime: lambda.Runtime.NODEJS_20_X,
       handler: 'app.make_reservation',
       code: lambda.Code.fromAsset('./functions/make_reservations/lib'),
+    });
+
+    const deleteReservation = new lambda.Function(this, 'DeleteReservation', {
+      runtime: lambda.Runtime.NODEJS_20_X,
+      handler: 'app.delete_reservation',
+      code: lambda.Code.fromAsset('./functions/delete_reservation/lib'),
     });
 
   // Create an API Gateway
@@ -42,16 +42,10 @@ export class SaunaAppStack extends Stack {
       },
     });
 
-    const templateLambdaIntegration = new HttpLambdaIntegration('TemplateIntegration', myLambda);
     const reservationsLambdaIntegration = new HttpLambdaIntegration('ReservationsLambdaIntegration', reservations);
     const makeReservationLambdaIntegration = new HttpLambdaIntegration('MakeReservationLambdaIntegration', makeReservation);
-
+    const deleteReservationLambdaIntegration = new HttpLambdaIntegration('DeleteReservationLambdaIntegration', deleteReservation);
     // Create a resource and method for the API
-    httpApi.addRoutes({
-        path: '/invoke',
-        methods: [ HttpMethod.GET],
-        integration: templateLambdaIntegration,
-    })
 
     httpApi.addRoutes({
         path: '/reservations',
@@ -63,6 +57,12 @@ export class SaunaAppStack extends Stack {
       path: '/reservation',
       methods: [ HttpMethod.POST],
       integration: makeReservationLambdaIntegration,
+    })
+
+    httpApi.addRoutes({
+      path: '/reservation',
+      methods: [ HttpMethod.DELETE],
+      integration: deleteReservationLambdaIntegration,
     })
 
     // Output the API endpoint URL
