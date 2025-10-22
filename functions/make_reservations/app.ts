@@ -29,16 +29,43 @@ export const make_reservation: APIGatewayProxyHandler = async (event, context) =
                 S: body.date
             }
         },
+        ConditionExpression: "attribute_not_exists(Id)"
     });
 
-    const response = await client.send(command);
-    console.log(response)
+    try{
+    
+        const response = await client.send(command);
+        console.log(response)
+        return {
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({message: `Sauna ${body.sauna} reserved ${body.date} `}),
+            statusCode: 200
+        }
+
+    } catch(err: unknown) {
+        if (err && err instanceof Error) {
+            console.log(err)
+            if (err.message === "The conditional request failed") {
+                return {
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({message: `Sauna ${body.sauna} already reserved ${body.date} `}),
+                    statusCode: 400
+                }
+            }
+        }
+
+    }
 
     return {
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({message: `Sauna ${body.sauna} reserved ${body.date} `}),
-        statusCode: 200
+        body: JSON.stringify({message: `Something went wrong`}),
+        statusCode: 400
     }
+   
 }

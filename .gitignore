@@ -2,8 +2,9 @@
 !jest.config.js
 *.d.ts
 node_modules
+*/node_modules
 */lib
-
+dynamodb_data
 # CDK asset staging directory
 .cdk.staging
 cdk.out
