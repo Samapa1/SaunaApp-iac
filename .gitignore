@@ -5,6 +5,7 @@ node_modules
 */node_modules
 */lib
 dynamodb_data
+.vscode
 # CDK asset staging directory
 .cdk.staging
 cdk.out
