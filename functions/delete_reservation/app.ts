@@ -28,32 +28,33 @@ export const delete_reservation: APIGatewayProxyHandler = async (event, context)
             Date: {
                 S: date
             }
-        }
+        },
+        ReturnValues: "ALL_OLD",
     });
 
     try{
         const response = await client.send(command);
         console.log(response)
+        if (!response.Attributes) {
+            return {
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({message: `Reservation for sauna${sauna} ${date} not found.`}),
+                statusCode: 404
+            }
+        }
         return {
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({message: `Reservation for ${sauna} ${date} removed.`}),
+            body: JSON.stringify({message: `Reservation for sauna${sauna} ${date} removed.`}),
             statusCode: 200
         }
     
     } catch(err: unknown) {
         if (err && err instanceof Error) {
             console.log(err)
-            // if (err.message === "The conditional request failed") {
-            //     return {
-            //         headers: {
-            //             "Content-Type": "application/json"
-            //         },
-            //         body: JSON.stringify({message: `Sauna ${body.sauna} already reserved ${body.date} `}),
-            //         statusCode: 400
-            //     }
-            // }
         }
     }
     
