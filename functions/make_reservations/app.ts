@@ -11,7 +11,8 @@ export const make_reservation: APIGatewayProxyHandler = async (event, context) =
     if (! event.body) {
         return {
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Headers": "*"
             },
             body: JSON.stringify({message: "Please enter sauna and date"}),
             statusCode: 400
@@ -38,7 +39,8 @@ export const make_reservation: APIGatewayProxyHandler = async (event, context) =
         console.log(response)
         return {
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Headers": "*"
             },
             body: JSON.stringify({message: `Sauna ${body.sauna} reserved ${body.date} `}),
             statusCode: 200
@@ -50,7 +52,8 @@ export const make_reservation: APIGatewayProxyHandler = async (event, context) =
             if (err.message === "The conditional request failed") {
                 return {
                     headers: {
-                        "Content-Type": "application/json"
+                        "Content-Type": "application/json",
+                        "Access-Control-Allow-Headers": "*"
                     },
                     body: JSON.stringify({message: `Sauna ${body.sauna} already reserved ${body.date} `}),
                     statusCode: 400
@@ -62,7 +65,8 @@ export const make_reservation: APIGatewayProxyHandler = async (event, context) =
 
     return {
         headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Headers": "*"
         },
         body: JSON.stringify({message: `Something went wrong`}),
         statusCode: 400

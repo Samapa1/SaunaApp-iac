@@ -5,7 +5,7 @@ import { CorsHttpMethod, HttpApi } from 'aws-cdk-lib/aws-apigatewayv2';
 import { HttpLambdaIntegration } from 'aws-cdk-lib/aws-apigatewayv2-integrations';
 import { HttpMethod } from 'aws-cdk-lib/aws-events';
 
-export class SaunaAppStack extends Stack {
+export class SaunaAppApiStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
@@ -38,6 +38,8 @@ export class SaunaAppStack extends Stack {
           CorsHttpMethod.PUT,
           CorsHttpMethod.POST,
         ],
+        // allowHeaders: ['Content-Type'],
+        allowHeaders: ["*"],
         allowOrigins: ["*"],
       },
     });

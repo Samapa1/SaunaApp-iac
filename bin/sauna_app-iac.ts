@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 import * as cdk from 'aws-cdk-lib';
-import { SaunaAppStack } from '../lib/sauna_app-iac-stack';
+import { SaunaAppApiStack } from '../lib/sauna_app-iac-stack';
+import { SaunaAppDBStack } from '../lib/sauna_app-db-stack';
 
 const app = new cdk.App();
-new SaunaAppStack(app, 'SaunaAppStack', {
+new SaunaAppApiStack(app, 'SaunaAppApiStack', {
   /* If you don't specify 'env', this stack will be environment-agnostic.
    * Account/Region-dependent features and context lookups will not work,
    * but a single synthesized template can be deployed anywhere. */
@@ -18,3 +19,4 @@ new SaunaAppStack(app, 'SaunaAppStack', {
 
   /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
 });
+new SaunaAppDBStack(app, 'SaunaAppDBStack')

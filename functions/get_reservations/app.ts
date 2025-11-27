@@ -24,10 +24,12 @@ export const lambda_handler: APIGatewayProxyHandler = async (event, context) => 
             Date: r.Date.S
         })
     } ) 
+    console.log("Hello")
 
     return {
         headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Headers": "*"
         },
         body: JSON.stringify(resultFormatted),
         statusCode: 200
