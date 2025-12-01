@@ -28,6 +28,7 @@ export class SaunaAppApiStack extends Stack {
       code: lambda.Code.fromAsset('./functions/delete_reservation/lib'),
     });
 
+
   // Create an API Gateway
     const httpApi = new HttpApi(this, "MyApi", {
       apiName: "My API",
@@ -47,6 +48,7 @@ export class SaunaAppApiStack extends Stack {
     const reservationsLambdaIntegration = new HttpLambdaIntegration('ReservationsLambdaIntegration', reservations);
     const makeReservationLambdaIntegration = new HttpLambdaIntegration('MakeReservationLambdaIntegration', makeReservation);
     const deleteReservationLambdaIntegration = new HttpLambdaIntegration('DeleteReservationLambdaIntegration', deleteReservation);
+
     // Create a resource and method for the API
 
     httpApi.addRoutes({

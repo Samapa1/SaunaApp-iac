@@ -6,7 +6,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "dev": "sam local start-api --docker-network lambda-local -t ./cdk.out/SaunaAppStack.template.json",
+    "dev": "sam local start-api --docker-network lambda-local -t ./cdk.out/SaunaAppApiStack.template.json",
     "synth": "cdk synth --no-staging",
     "watch": "tsc -w",
     "test": "jest",
