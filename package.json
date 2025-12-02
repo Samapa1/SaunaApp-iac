@@ -5,7 +5,7 @@
     "sauna_app-iac": "bin/sauna_app-iac.js"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "cd ./functions/delete_reservation && npm run build && cd ../get_reservations && npm run build && cd ../make_reservations && npm run build",
     "dev": "sam local start-api --docker-network lambda-local -t ./cdk.out/SaunaAppApiStack.template.json",
     "synth": "cdk synth --no-staging",
     "watch": "tsc -w",
