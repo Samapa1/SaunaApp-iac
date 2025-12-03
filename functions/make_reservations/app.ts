@@ -1,13 +1,13 @@
 import { APIGatewayProxyHandler } from "aws-lambda"
-import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
+import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
 
 export const client = DynamoDBDocumentClient.from(new DynamoDBClient({
     endpoint: 'http://dynamodb:8000'
 }));
 
 export const make_reservation: APIGatewayProxyHandler = async (event, context) => {
-    console.log("testing makereservation function")
+    console.log("Testing makereservation function")
     if (! event.body) {
         return {
             headers: {
@@ -20,15 +20,11 @@ export const make_reservation: APIGatewayProxyHandler = async (event, context) =
     }
 
     const body = JSON.parse(event.body)
-    const command = new PutItemCommand ({
+    const command = new PutCommand ({
         TableName: "SaunaTable",
         Item: {
-            Id: {
-                S: body.sauna
-            },
-            Date: {
-                S: body.date
-            }
+            Id: body.sauna,
+            Date: body.date
         },
         ConditionExpression: "attribute_not_exists(Id)"
     });
