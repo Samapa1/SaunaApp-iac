@@ -1,5 +1,5 @@
 {
-  "name": "my_function",
+  "name": "get_reservations",
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
