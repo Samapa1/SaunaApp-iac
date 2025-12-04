@@ -18,10 +18,22 @@ export const lambda_handler: APIGatewayProxyHandler = async (event, context) => 
     })
 
     const resultFormatted = reservationsForSauna?.map(r => {
-        return ({
-            Id: r.Id,
-            Date: r.Date
-        })
+        const dateParts = r.Date.split('-')
+        if (dateParts.length === 5) {
+            const dateWithoutWeekNumber = `${dateParts.slice(0,3).join('-')}-${dateParts[4]}`
+            console.log(dateWithoutWeekNumber)
+
+            return ({
+                Id: r.Id,
+                Date: dateWithoutWeekNumber
+            })
+        }
+        else {
+             return ({
+                Id: r.Id,
+                Date: r.Date
+            })
+        }
     } ) 
  
     return {
