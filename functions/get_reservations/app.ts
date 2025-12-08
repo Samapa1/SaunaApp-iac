@@ -1,6 +1,6 @@
 import { APIGatewayProxyHandler } from "aws-lambda"
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient, ScanCommand } from "@aws-sdk/lib-dynamodb";
+import { DynamoDBDocumentClient, ScanCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
 
 export const client = DynamoDBDocumentClient.from(new DynamoDBClient({
     endpoint: 'http://dynamodb:8000'
@@ -8,8 +8,21 @@ export const client = DynamoDBDocumentClient.from(new DynamoDBClient({
 
 export const lambda_handler: APIGatewayProxyHandler = async (event, context) => {
     console.log("Testing getreservations function")
-    const sauna = event.queryStringParameters?.sauna
-    const command = new ScanCommand({TableName: 'SaunaTable'});
+    // const sauna = event.queryStringParameters?.sauna
+    // const dateData = event.queryStringParameters?.date
+    const sauna = "3"
+    const dateData = "2025-12-50"
+    // const command = new ScanCommand({TableName: 'SaunaTable'});
+    const queryInput = {
+        TableName: 'SaunaTable',
+        KeyConditionExpression: 'Id = :id and begins_with(#dynamoDate, :date)',
+        ExpressionAttributeValues: {
+            ':id': sauna,
+            ':date': dateData
+        },  
+        ExpressionAttributeNames: { "#dynamoDate": "Date" }
+    }
+    const command = new QueryCommand(queryInput)
     const response = await client.send(command);
 
     const retrievedItems = response.Items
