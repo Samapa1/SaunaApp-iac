@@ -18,9 +18,10 @@ export const lambda_handler: APIGatewayProxyHandler = async (event, context) => 
     })
 
     const resultFormatted = reservationsForSauna?.map(r => {
+        const dateParts = r.Date.split('-')
         return ({
             Id: r.Id,
-            Date: r.Date
+            Date: `${dateParts[3]}-${dateParts[1]}-${dateParts[0]}-${dateParts[4]}`
         })
     } ) 
  
