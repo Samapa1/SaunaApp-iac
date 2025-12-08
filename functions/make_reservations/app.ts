@@ -25,8 +25,7 @@ export const make_reservation: APIGatewayProxyHandler = async (event, context) =
     const withoutHoursData = dateParts.slice(0,3)
     const withoutHoursDataReversed = withoutHoursData.toReversed()
     const newWeekNumber = DateTime.fromISO(withoutHoursDataReversed.join('-')).weekNumber; 
-    const withoutHours = withoutHoursData.join('-')
-    const dateWithWeekNumber = `${withoutHours}-${newWeekNumber}-${dateParts[3]}`
+    const dateWithWeekNumber = `${withoutHoursDataReversed[0]}-${withoutHoursDataReversed[1]}-${newWeekNumber}-${withoutHoursDataReversed[2]}-${dateParts[3]}`
     console.log(dateWithWeekNumber)
   
     const command = new PutCommand ({
