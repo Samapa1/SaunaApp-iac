@@ -39,8 +39,7 @@ export const make_reservation: APIGatewayProxyHandler = async (event, context) =
 
     try{
     
-        const response = await client.send(command);
-        console.log(response)
+        await client.send(command);
         return {
             headers: {
                 "Content-Type": "application/json",
