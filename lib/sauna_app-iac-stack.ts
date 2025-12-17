@@ -1,6 +1,7 @@
 import { CfnOutput, Stack, StackProps } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
+import * as lambdaNode from 'aws-cdk-lib/aws-lambda-nodejs';
 import { CorsHttpMethod, HttpApi } from 'aws-cdk-lib/aws-apigatewayv2';
 import { HttpLambdaIntegration } from 'aws-cdk-lib/aws-apigatewayv2-integrations';
 import { HttpMethod } from 'aws-cdk-lib/aws-events';
@@ -10,16 +11,21 @@ export class SaunaAppApiStack extends Stack {
     super(scope, id, props);
 
   // Create Lambda functions
+    // const reservations = new lambdaNode.NodejsFunction(this, 'GetReservations', {
+    //   runtime: lambda.Runtime.NODEJS_20_X,
+    //   handler: 'get_reservations',
+    //   entry: './functions/get_reservations/app.ts',
+    // });
     const reservations = new lambda.Function(this, 'Reservations', {
       runtime: lambda.Runtime.NODEJS_20_X,
       handler: 'app.lambda_handler',
       code: lambda.Code.fromAsset('./functions/get_reservations/lib'),
     });
 
-    const makeReservation = new lambda.Function(this, 'MakeReservation', {
+    const makeReservation = new lambdaNode.NodejsFunction(this, 'MakeReservation', {
       runtime: lambda.Runtime.NODEJS_20_X,
-      handler: 'app.make_reservation',
-      code: lambda.Code.fromAsset('./functions/make_reservations/lib'),
+      handler: 'make_reservation',
+      entry: './functions/make_reservations/app.ts',
     });
 
     const deleteReservation = new lambda.Function(this, 'DeleteReservation', {

@@ -1,13 +1,15 @@
 import { APIGatewayProxyHandler } from "aws-lambda"
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
+import { DateTime } from 'luxon';
 
 export const client = DynamoDBDocumentClient.from(new DynamoDBClient({
     endpoint: 'http://dynamodb:8000'
 }));
 
 export const make_reservation: APIGatewayProxyHandler = async (event, context) => {
-    console.log("Testing makereservation function")
+    console.log("make_reservation function")
+    
     if (! event.body) {
         return {
             headers: {
@@ -18,13 +20,19 @@ export const make_reservation: APIGatewayProxyHandler = async (event, context) =
             statusCode: 400
         }
     }
-
     const body = JSON.parse(event.body)
+    const dateParts = body.date.split('-')
+    const withoutHoursData = dateParts.slice(0,3)
+    const withoutHoursDataReversed = withoutHoursData.toReversed()
+    const newWeekNumber = DateTime.fromISO(withoutHoursDataReversed.join('-')).weekNumber; 
+    const dateWithWeekNumber = `${withoutHoursDataReversed[0]}-${withoutHoursDataReversed[1]}-${newWeekNumber}-${withoutHoursDataReversed[2]}-${dateParts[3]}`
+    console.log(dateWithWeekNumber)
+  
     const command = new PutCommand ({
         TableName: "SaunaTable",
         Item: {
             Id: body.sauna,
-            Date: body.date
+            Date: dateWithWeekNumber
         },
         ConditionExpression: "attribute_not_exists(Id)"
     });
