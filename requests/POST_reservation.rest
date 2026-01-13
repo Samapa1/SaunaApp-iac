@@ -2,7 +2,7 @@ POST http://127.0.0.1:3000/reservation
 
 {
     "sauna": "3",
-    "date": "02-11-2025-22"
+    "date": "2025-12-50-8-19"
 }
 
 # --payload '{ "key": "value" }'

@@ -16,10 +16,10 @@ export class SaunaAppApiStack extends Stack {
     //   handler: 'get_reservations',
     //   entry: './functions/get_reservations/app.ts',
     // });
-    const reservations = new lambda.Function(this, 'Reservations', {
+    const reservations = new lambdaNode.NodejsFunction(this, 'Reservations', {
       runtime: lambda.Runtime.NODEJS_20_X,
-      handler: 'app.lambda_handler',
-      code: lambda.Code.fromAsset('./functions/get_reservations/lib'),
+      handler: 'lambda_handler',
+      entry: './functions/get_reservations/app.ts',
     });
 
     const makeReservation = new lambdaNode.NodejsFunction(this, 'MakeReservation', {
