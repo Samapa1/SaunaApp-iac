@@ -50,7 +50,6 @@ export const lambda_handler: APIGatewayProxyHandler = async (event, context) => 
      } 
 
     const dateData = event.queryStringParameters?.date 
-    console.log(dateData)
     if (!dateData) 
           return {
             headers: {
