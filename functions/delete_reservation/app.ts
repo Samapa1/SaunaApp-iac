@@ -13,7 +13,6 @@ export const delete_reservation: APIGatewayProxyHandler = async (event, context)
         return {
             headers: {
                 "Content-Type": "application/json",
-                "Access-Control-Allow-Headers": "*"
             },
             body: JSON.stringify({message: "Please enter sauna and date"}),
             statusCode: 400
@@ -35,7 +34,6 @@ export const delete_reservation: APIGatewayProxyHandler = async (event, context)
             return {
                 headers: {
                     "Content-Type": "application/json",
-                    "Access-Control-Allow-Headers": "*"
                 },
                 body: JSON.stringify({message: `Reservation for sauna${sauna} ${date} not found.`}),
                 statusCode: 404
@@ -44,7 +42,6 @@ export const delete_reservation: APIGatewayProxyHandler = async (event, context)
         return {
             headers: {
                 "Content-Type": "application/json",
-                "Access-Control-Allow-Headers": "*"
             },
             body: JSON.stringify({message: `Reservation for sauna${sauna} ${date} removed.`}),
             statusCode: 200
@@ -59,7 +56,6 @@ export const delete_reservation: APIGatewayProxyHandler = async (event, context)
     return {
         headers: {
             "Content-Type": "application/json",
-            "Access-Control-Allow-Headers": "*"
         },
         body: JSON.stringify({message: `Something went wrong`}),
         statusCode: 400
