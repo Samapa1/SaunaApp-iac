@@ -9,6 +9,8 @@ export const client = DynamoDBDocumentClient.from(new DynamoDBClient({
 
 export const make_reservation: APIGatewayProxyHandler = async (event, context) => {
     console.log("make_reservation function")
+    const authorizationHeader = event.headers['Authorization'];
+    console.log('Authorization Header:', authorizationHeader);
     
     if (! event.body) {
         return {

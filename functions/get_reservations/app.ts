@@ -2,6 +2,7 @@ import { APIGatewayProxyHandler } from "aws-lambda"
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { DateTime } from "luxon";
+import authorize from "../../utils/functions/authorization";
 
 export const client = DynamoDBDocumentClient.from(new DynamoDBClient({
     endpoint: 'http://dynamodb:8000'
@@ -9,6 +10,22 @@ export const client = DynamoDBDocumentClient.from(new DynamoDBClient({
 
 export const lambda_handler: APIGatewayProxyHandler = async (event, context) => {
     const sauna = event.queryStringParameters?.sauna
+     const authorizationHeader = event.headers['Authorization'];
+
+        try { const result = await authorize(authorizationHeader); 
+        console.log('Authorization successful:', result);
+        }
+        catch (error) {
+            return {
+                headers: {
+                    "Content-Type": "application/json",
+                    "Access-Control-Allow-Headers": "*"
+                },
+                body: JSON.stringify({message: "Unauthorized"}),
+                statusCode: 401
+            }
+        }
+
 
     const getReservations = async (data: string) => {    
         const nextQueryInput = {
