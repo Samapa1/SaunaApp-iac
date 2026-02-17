@@ -12,11 +12,12 @@
   "license": "ISC",
   "devDependencies": {
     "@types/aws-lambda": "^8.10.155",
-    "@types/node": "^25.0.10"
+    "@types/luxon": "^3.7.1"
   },
   "dependencies": {
-    "@aws-sdk/client-dynamodb": "^3.975.0",
-    "@aws-sdk/lib-dynamodb": "^3.975.0",
-    "aws-sdk": "^2.1692.0"
+    "@aws-sdk/client-dynamodb": "^3.908.0",
+    "@aws-sdk/lib-dynamodb": "^3.908.0",
+    "aws-sdk": "^2.1692.0",
+    "luxon": "^3.7.2"
   }
 }

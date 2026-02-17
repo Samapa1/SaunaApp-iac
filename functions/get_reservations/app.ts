@@ -9,6 +9,7 @@ export const client = DynamoDBDocumentClient.from(new DynamoDBClient({
 }));
 
 export const lambda_handler: APIGatewayProxyHandler = async (event, context) => {
+    console.log("get_reservations function")
     const sauna = event.queryStringParameters?.sauna
      const authorizationHeader = event.headers['Authorization'];
 
