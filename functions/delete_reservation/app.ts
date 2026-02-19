@@ -9,8 +9,7 @@ export const client = DynamoDBDocumentClient.from(new DynamoDBClient({
 
 const createResponse = (statusCode: number, message: string) => ({
     headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Headers": "*"
+        "Content-Type": "application/json"
     },
     body: JSON.stringify({ message }),
     statusCode
