@@ -9,3 +9,4 @@ dynamodb_data
 # CDK asset staging directory
 .cdk.staging
 cdk.out
+.env
