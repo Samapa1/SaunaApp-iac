@@ -30,7 +30,7 @@ export const lambda_handler: APIGatewayProxyHandler = async (event, context) => 
         const reservationsForSauna = allItems?.filter(r => {
             return (Number(r.Id) === Number(sauna))
         })
-
+        
         const resultFormatted = reservationsForSauna?.map(r => {
             const dateParts = r.Date.split('-')
             return ({
