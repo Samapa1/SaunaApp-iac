@@ -20,8 +20,9 @@ export const make_reservation: APIGatewayProxyHandler = async (event, context) =
     console.log("make_reservation function");
     const authorizationHeader = event.headers['Authorization'];
 
+    let authorized;
     try {
-        await authorize(authorizationHeader);
+        authorized = await authorize(authorizationHeader);
         console.log('Authorization successful');
     } catch (error) {
         return createResponse(401, "Unauthorized");
@@ -45,7 +46,8 @@ export const make_reservation: APIGatewayProxyHandler = async (event, context) =
             TableName: "SaunaTable",
             Item: {
                 Id: body.sauna,
-                Date: dateWithWeekNumber
+                Date: dateWithWeekNumber,
+                Username: authorized.username
             },
             ConditionExpression: "attribute_not_exists(Id)"
         });

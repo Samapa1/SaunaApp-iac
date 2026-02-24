@@ -17,9 +17,10 @@ const createResponse = (statusCode: number, message: string) => ({
 
 export const delete_reservation: APIGatewayProxyHandler = async (event, context) => {
     const authorizationHeader = event.headers['Authorization'];
+    let authorized
 
     try {
-        await authorize(authorizationHeader);
+        authorized = await authorize(authorizationHeader);
         console.log('Authorization successful');
     } catch (error) {
         return createResponse(401, "Unauthorized");
@@ -37,6 +38,10 @@ export const delete_reservation: APIGatewayProxyHandler = async (event, context)
         Key: {
             Id: sauna,
             Date: date
+        },
+        ConditionExpression: "Username = :authorizedUsername",
+        ExpressionAttributeValues: {
+            ":authorizedUsername": authorized.username
         },
         ReturnValues: "ALL_OLD",
     })
