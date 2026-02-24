@@ -1,2 +1,2 @@
-DELETE http://127.0.0.1:3000/reservation?sauna=3&date=2026-02-8-22-17
-Authorization: xxx
+DELETE http://127.0.0.1:3000/reservation?sauna=3&date=2026-02-8-17-17
+Authorization: xx

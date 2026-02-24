@@ -1,6 +1,6 @@
 import { APIGatewayProxyHandler } from "aws-lambda"
-import { DynamoDBClient, DeleteItemCommand } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
+import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import { DynamoDBDocumentClient, DeleteCommand } from "@aws-sdk/lib-dynamodb";
 import authorize from "../../utils/functions/authorization";
 
 export const client = DynamoDBDocumentClient.from(new DynamoDBClient({
@@ -32,14 +32,14 @@ export const delete_reservation: APIGatewayProxyHandler = async (event, context)
         return createResponse(400, "Please enter sauna and date");
     }
 
-    const command = new DeleteItemCommand({
+    const command = new DeleteCommand({
         TableName: "SaunaTable",
         Key: {
-            Id: { S: sauna },
-            Date: { S: date }
+            Id: sauna,
+            Date: date
         },
         ReturnValues: "ALL_OLD",
-    });
+    })
 
     try {
         const response = await client.send(command);
