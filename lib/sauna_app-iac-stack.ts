@@ -6,32 +6,41 @@ import { CorsHttpMethod, HttpApi } from 'aws-cdk-lib/aws-apigatewayv2';
 import { HttpLambdaIntegration } from 'aws-cdk-lib/aws-apigatewayv2-integrations';
 import { HttpMethod } from 'aws-cdk-lib/aws-events';
 
+import { getConfig } from "./config";
+const config = getConfig();
+
 export class SaunaAppApiStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
-  // Create Lambda functions
-    // const reservations = new lambdaNode.NodejsFunction(this, 'GetReservations', {
-    //   runtime: lambda.Runtime.NODEJS_20_X,
-    //   handler: 'get_reservations',
-    //   entry: './functions/get_reservations/app.ts',
-    // });
     const reservations = new lambdaNode.NodejsFunction(this, 'Reservations', {
       runtime: lambda.Runtime.NODEJS_20_X,
       handler: 'lambda_handler',
       entry: './functions/get_reservations/app.ts',
+      environment: {
+        USER_POOL_ID : config.USER_POOL_ID,
+        CLIENT_ID: config.CLIENT_ID,
+      },
     });
 
     const makeReservation = new lambdaNode.NodejsFunction(this, 'MakeReservation', {
       runtime: lambda.Runtime.NODEJS_20_X,
       handler: 'make_reservation',
       entry: './functions/make_reservations/app.ts',
+      environment: {
+        USER_POOL_ID : config.USER_POOL_ID,
+        CLIENT_ID: config.CLIENT_ID,
+      },
     });
 
-    const deleteReservation = new lambda.Function(this, 'DeleteReservation', {
+    const deleteReservation = new lambdaNode.NodejsFunction(this, 'DeleteReservation', {
       runtime: lambda.Runtime.NODEJS_20_X,
-      handler: 'app.delete_reservation',
-      code: lambda.Code.fromAsset('./functions/delete_reservation/lib'),
+      handler: 'delete_reservation',
+      entry: './functions/delete_reservation/app.ts',
+      environment: {
+        USER_POOL_ID : config.USER_POOL_ID,
+        CLIENT_ID: config.CLIENT_ID,
+      },
     });
 
 
