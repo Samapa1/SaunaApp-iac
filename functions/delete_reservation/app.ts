@@ -2,6 +2,7 @@ import { APIGatewayProxyHandler } from "aws-lambda"
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, DeleteCommand } from "@aws-sdk/lib-dynamodb";
 import authorize from "../../utils/functions/authorization";
+import { CognitoAccessTokenPayload } from "aws-jwt-verify/jwt-model";
 
 export const client = DynamoDBDocumentClient.from(new DynamoDBClient({
     endpoint: 'http://dynamodb:8000'
@@ -17,9 +18,10 @@ const createResponse = (statusCode: number, message: string) => ({
 
 export const delete_reservation: APIGatewayProxyHandler = async (event, context) => {
     const authorizationHeader = event.headers['Authorization'];
+    let authorized: CognitoAccessTokenPayload
 
     try {
-        await authorize(authorizationHeader);
+        authorized = await authorize(authorizationHeader);
         console.log('Authorization successful');
     } catch (error) {
         return createResponse(401, "Unauthorized");
@@ -37,6 +39,13 @@ export const delete_reservation: APIGatewayProxyHandler = async (event, context)
         Key: {
             Id: sauna,
             Date: date
+        },
+        ConditionExpression: "(attribute_not_exists(Id) AND attribute_not_exists(#Date)) OR UserId = :authorizedUserId",
+        ExpressionAttributeValues: {
+            ":authorizedUserId": authorized.username
+        },
+        ExpressionAttributeNames: {
+            "#Date": "Date"
         },
         ReturnValues: "ALL_OLD",
     })

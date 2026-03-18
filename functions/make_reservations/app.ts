@@ -3,6 +3,7 @@ import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
 import { DateTime } from 'luxon';
 import authorize from "../../utils/functions/authorization";
+import { CognitoAccessTokenPayload } from "aws-jwt-verify/jwt-model";
 
 export const client = DynamoDBDocumentClient.from(new DynamoDBClient({
     endpoint: 'http://dynamodb:8000'
@@ -20,8 +21,10 @@ export const make_reservation: APIGatewayProxyHandler = async (event, context) =
     console.log("make_reservation function");
     const authorizationHeader = event.headers['Authorization'];
 
+    let authorized: CognitoAccessTokenPayload
+
     try {
-        await authorize(authorizationHeader);
+        authorized = await authorize(authorizationHeader);
         console.log('Authorization successful');
     } catch (error) {
         return createResponse(401, "Unauthorized");
@@ -45,7 +48,8 @@ export const make_reservation: APIGatewayProxyHandler = async (event, context) =
             TableName: "SaunaTable",
             Item: {
                 Id: body.sauna,
-                Date: dateWithWeekNumber
+                Date: dateWithWeekNumber,
+                UserId: authorized.username
             },
             ConditionExpression: "attribute_not_exists(Id)"
         });

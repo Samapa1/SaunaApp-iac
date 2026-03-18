@@ -41,6 +41,7 @@ export const lambda_handler: APIGatewayProxyHandler = async (event, context) => 
 
         const command = new QueryCommand(nextQueryInput);
         const response = await client.send(command);
+        console.log("Query response:", response.Items);
         return response.Items;
     };
 
