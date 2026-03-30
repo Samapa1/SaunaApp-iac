@@ -9,6 +9,7 @@ import { CognitoJwtVerifier } from "aws-jwt-verify";
 
 export const authorize = async (token: string | undefined) => {
     if (!token) { 
+        console.log("No token provided");
         throw new Error("No token provided");
     }           
     try {

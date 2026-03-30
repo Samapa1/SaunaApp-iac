@@ -19,7 +19,7 @@ const createResponse = (statusCode: number, message: string) => ({
 
 export const make_reservation: APIGatewayProxyHandler = async (event, context) => {
     console.log("make_reservation function");
-    const authorizationHeader = event.headers['Authorization'];
+    const authorizationHeader = event.headers['x-authorization'];
 
     let authorized: CognitoAccessTokenPayload
 
