@@ -43,6 +43,15 @@ export class SaunaAppApiStack extends Stack {
       },
     });
 
+    const userReservations = new lambdaNode.NodejsFunction(this, 'UserReservations', {
+      runtime: lambda.Runtime.NODEJS_20_X,
+      handler: 'get_userReservations',
+      entry: './functions/get_userreservations/app.ts',
+      environment: {
+        USER_POOL_ID : config.USER_POOL_ID,
+        CLIENT_ID: config.CLIENT_ID,
+      },
+    });
 
   // Create an API Gateway
     const httpApi = new HttpApi(this, "MyApi", {
@@ -63,6 +72,7 @@ export class SaunaAppApiStack extends Stack {
     const reservationsLambdaIntegration = new HttpLambdaIntegration('ReservationsLambdaIntegration', reservations);
     const makeReservationLambdaIntegration = new HttpLambdaIntegration('MakeReservationLambdaIntegration', makeReservation);
     const deleteReservationLambdaIntegration = new HttpLambdaIntegration('DeleteReservationLambdaIntegration', deleteReservation);
+    const userReservationsLambdaIntegration = new HttpLambdaIntegration('UserReservationsLambdaIntegration', userReservations); 
 
     // Create a resource and method for the API
 
@@ -83,6 +93,13 @@ export class SaunaAppApiStack extends Stack {
       methods: [ HttpMethod.DELETE],
       integration: deleteReservationLambdaIntegration,
     })
+
+    httpApi.addRoutes({
+      path: '/userreservations',
+      methods: [ HttpMethod.GET],
+      integration: userReservationsLambdaIntegration,
+    })
+
 
     // Output the API endpoint URL
     new CfnOutput(this, "ApiEndpoint", {
