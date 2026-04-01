@@ -26,7 +26,7 @@ const createResponse = (statusCode: number, message: string | object) => ({
 export const lambda_handler: APIGatewayProxyHandler = async (event, context) => {
     console.log("get_reservations function");
     const sauna = event.queryStringParameters?.sauna;
-    const authorizationHeader = event.headers['x-authorization'];
+    const authorizationHeader = event.headers['authorization'];
 
     let authorized: CognitoAccessTokenPayload;
 

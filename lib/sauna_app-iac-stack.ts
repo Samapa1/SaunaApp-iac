@@ -1,7 +1,8 @@
-import { CfnOutput, Stack, StackProps } from 'aws-cdk-lib';
+import { CfnOutput, Fn, Stack, StackProps } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as lambdaNode from 'aws-cdk-lib/aws-lambda-nodejs';
+import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
 import { CorsHttpMethod, HttpApi } from 'aws-cdk-lib/aws-apigatewayv2';
 import { HttpLambdaIntegration } from 'aws-cdk-lib/aws-apigatewayv2-integrations';
 import { HttpMethod } from 'aws-cdk-lib/aws-events';
@@ -13,6 +14,8 @@ export class SaunaAppApiStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
+    const SaunaTable = Fn.importValue('MySaunaTable')
+
     const reservations = new lambdaNode.NodejsFunction(this, 'Reservations', {
       runtime: lambda.Runtime.NODEJS_20_X,
       handler: 'lambda_handler',
@@ -22,6 +25,12 @@ export class SaunaAppApiStack extends Stack {
         CLIENT_ID: config.CLIENT_ID,
       },
     });
+
+
+    const table = dynamodb.TableV2.fromTableName(this, 'Saunatable', SaunaTable)
+
+    // table.grantReadData(reservations);
+    table.grant(reservations, "dynamodb:Query");
 
     const makeReservation = new lambdaNode.NodejsFunction(this, 'MakeReservation', {
       runtime: lambda.Runtime.NODEJS_20_X,
@@ -33,6 +42,8 @@ export class SaunaAppApiStack extends Stack {
       },
     });
 
+    table.grant(makeReservation, "dynamodb:PutItem");
+
     const deleteReservation = new lambdaNode.NodejsFunction(this, 'DeleteReservation', {
       runtime: lambda.Runtime.NODEJS_20_X,
       handler: 'delete_reservation',
@@ -43,6 +54,7 @@ export class SaunaAppApiStack extends Stack {
       },
     });
 
+    table.grant(deleteReservation, "dynamodb:DeleteItem");
 
   // Create an API Gateway
     const httpApi = new HttpApi(this, "MyApi", {
