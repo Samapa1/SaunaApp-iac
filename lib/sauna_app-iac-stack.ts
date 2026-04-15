@@ -26,6 +26,7 @@ export class SaunaAppApiStack extends Stack {
       },
     });
 
+    // (reservations.node.defaultChild as lambda.CfnFunction).reservedConcurrentExecutions = 10;  
 
     const table = dynamodb.TableV2.fromTableName(this, 'Saunatable', SaunaTable)
 
@@ -53,7 +54,7 @@ export class SaunaAppApiStack extends Stack {
         CLIENT_ID: config.CLIENT_ID,
       },
     });
-
+    
     table.grant(deleteReservation, "dynamodb:DeleteItem");
 
   // Create an API Gateway
