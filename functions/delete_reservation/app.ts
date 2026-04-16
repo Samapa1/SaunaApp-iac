@@ -5,11 +5,6 @@ import authorize from "../../utils/functions/authorization";
 import { CognitoAccessTokenPayload } from "aws-jwt-verify/jwt-model";
 import { DateTime } from "luxon";
 
-
-// const dynamoSettings = {
-//     process.env.ENDPOINT
-// }
-
 export const client = DynamoDBDocumentClient.from(new DynamoDBClient(process.env.ENDPOINT ?{
     endpoint: process.env.ENDPOINT
 } : {}));
@@ -36,7 +31,6 @@ export const delete_reservation: APIGatewayProxyHandler = async (event, context)
 
     const sauna = event.queryStringParameters?.sauna;
     const date = event.queryStringParameters?.date;
-    console.log(sauna, date, "sauna and date from query parameters");
 
      if (!sauna || !date) {
         return createResponse(400, "Please enter sauna and date");

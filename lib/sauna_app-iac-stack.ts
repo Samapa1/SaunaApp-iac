@@ -30,7 +30,6 @@ export class SaunaAppApiStack extends Stack {
 
     const table = dynamodb.TableV2.fromTableName(this, 'Saunatable', SaunaTable)
 
-    // table.grantReadData(reservations);
     table.grant(reservations, "dynamodb:Query");
 
     const makeReservation = new lambdaNode.NodejsFunction(this, 'MakeReservation', {

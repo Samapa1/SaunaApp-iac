@@ -27,8 +27,6 @@ export const lambda_handler: APIGatewayProxyHandler = async (event, context) => 
     console.log("get_reservations function");
     const sauna = event.queryStringParameters?.sauna;
     const authorizationHeader = event.headers['authorization'] || event.headers['Authorization'];
-    console.log("Sauna and authorization header from query parameters:", sauna, authorizationHeader);
-    console.log(event.headers, "All headers");
 
     let authorized: CognitoAccessTokenPayload;
 
