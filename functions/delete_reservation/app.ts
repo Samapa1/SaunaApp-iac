@@ -5,9 +5,14 @@ import authorize from "../../utils/functions/authorization";
 import { CognitoAccessTokenPayload } from "aws-jwt-verify/jwt-model";
 import { DateTime } from "luxon";
 
-export const client = DynamoDBDocumentClient.from(new DynamoDBClient({
-    endpoint: 'http://dynamodb:8000'
-}));
+
+// const dynamoSettings = {
+//     process.env.ENDPOINT
+// }
+
+export const client = DynamoDBDocumentClient.from(new DynamoDBClient(process.env.ENDPOINT ?{
+    endpoint: process.env.ENDPOINT
+} : {}));
 
 const createResponse = (statusCode: number, message: string) => ({
     headers: {
@@ -19,7 +24,7 @@ const createResponse = (statusCode: number, message: string) => ({
 
 export const delete_reservation: APIGatewayProxyHandler = async (event, context) => {
     console.log("Delete reservation")
-    const authorizationHeader = event.headers['Authorization'];
+    const authorizationHeader = event.headers['authorization'] || event.headers['Authorization'];
     let authorized: CognitoAccessTokenPayload
 
     try {

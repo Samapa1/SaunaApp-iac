@@ -11,9 +11,9 @@ interface Reservation {
     UserId: string;
 }
 
-export const client = DynamoDBDocumentClient.from(new DynamoDBClient({
-    endpoint: 'http://dynamodb:8000'
-}));
+export const client = DynamoDBDocumentClient.from(new DynamoDBClient(process.env.ENDPOINT ?{
+    endpoint: process.env.ENDPOINT
+} : {}));
 
 const createResponse = (statusCode: number, message: string | object) => ({
     headers: {
@@ -26,7 +26,9 @@ const createResponse = (statusCode: number, message: string | object) => ({
 export const lambda_handler: APIGatewayProxyHandler = async (event, context) => {
     console.log("get_reservations function");
     const sauna = event.queryStringParameters?.sauna;
-    const authorizationHeader = event.headers['Authorization'];
+    const authorizationHeader = event.headers['authorization'] || event.headers['Authorization'];
+    console.log("Sauna and authorization header from query parameters:", sauna, authorizationHeader);
+    console.log(event.headers, "All headers");
 
     let authorized: CognitoAccessTokenPayload;
 
