@@ -1,2 +1,2 @@
-GET http://127.0.0.1:3000/reservations?sauna=3&date=2026-02-9
+GET http://127.0.0.1:3000/reservations?sauna=1&date=2026-04-16
 Authorization: xxx
