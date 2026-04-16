@@ -2,11 +2,18 @@ import { APIGatewayProxyHandler } from "aws-lambda"
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { DateTime } from "luxon";
+import { CognitoAccessTokenPayload } from "aws-jwt-verify/jwt-model";
 import authorize from "../../utils/functions/authorization";
 
-export const client = DynamoDBDocumentClient.from(new DynamoDBClient({
-    endpoint: 'http://dynamodb:8000'
-}));
+interface Reservation {
+    Id: string;
+    Date: string;
+    UserId: string;
+}
+
+export const client = DynamoDBDocumentClient.from(new DynamoDBClient(process.env.ENDPOINT ?{
+    endpoint: process.env.ENDPOINT
+} : {}));
 
 const createResponse = (statusCode: number, message: string | object) => ({
     headers: {
@@ -19,16 +26,20 @@ const createResponse = (statusCode: number, message: string | object) => ({
 export const lambda_handler: APIGatewayProxyHandler = async (event, context) => {
     console.log("get_reservations function");
     const sauna = event.queryStringParameters?.sauna;
-    const authorizationHeader = event.headers['Authorization'];
+    const authorizationHeader = event.headers['authorization'] || event.headers['Authorization'];
+    console.log("Sauna and authorization header from query parameters:", sauna, authorizationHeader);
+    console.log(event.headers, "All headers");
+
+    let authorized: CognitoAccessTokenPayload;
 
     try {
-        await authorize(authorizationHeader);
+        authorized = await authorize(authorizationHeader);
         console.log('Authorization successful');
     } catch (error) {
         return createResponse(401, "Unauthorized");
     }
 
-    const getReservations = async (data: string) => {
+    const getReservations = async (data: string): Promise<Reservation[]> => {
         const nextQueryInput = {
             TableName: 'SaunaTable',
             KeyConditionExpression: 'Id = :id and begins_with(#dynamoDate, :date)',
@@ -42,10 +53,10 @@ export const lambda_handler: APIGatewayProxyHandler = async (event, context) => 
         const command = new QueryCommand(nextQueryInput);
         const response = await client.send(command);
         console.log("Query response:", response.Items);
-        return response.Items;
+        return response.Items as Reservation[];
     };
 
-    const formatResult = (allItems: any[]) => {
+    const formatResult = (allItems: Reservation[], currentUserId: string) => {
         const reservationsForSauna = allItems?.filter(r => {
             return (Number(r.Id) === Number(sauna));
         });
@@ -54,7 +65,8 @@ export const lambda_handler: APIGatewayProxyHandler = async (event, context) => 
             const dateParts = r.Date.split('-');
             return ({
                 Id: r.Id,
-                Date: `${dateParts[3]}-${dateParts[1]}-${dateParts[0]}-${dateParts[4]}`
+                Date: `${dateParts[3]}-${dateParts[1]}-${dateParts[0]}-${dateParts[4]}`,
+                isOwnReservation: r.UserId === currentUserId
             });
         });
 
@@ -80,11 +92,11 @@ export const lambda_handler: APIGatewayProxyHandler = async (event, context) => 
             const nextResponse = await getReservations(nextmonthDateData);
 
             const allItems = [...(firstResponseItems || []), ...(nextResponse || [])];
-            const formattedResult = formatResult(allItems);
+            const formattedResult = formatResult(allItems, authorized.username);
             return createResponse(200, formattedResult);
         } else {
             const retrievedItems = await getReservations(dateData);
-            const formattedResult = formatResult(retrievedItems || []);
+            const formattedResult = formatResult((retrievedItems || []), authorized.username);
             return createResponse(200, formattedResult);
         }
     } catch (err) {

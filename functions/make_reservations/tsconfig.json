@@ -3,7 +3,8 @@
         "target": "es6",
         "module": "commonjs",
         "strict": true,
-        "outDir": "./lib"
+        "outDir": "./lib",
+        "types": ["node"],
     },
     "include": [
         "app.ts"
