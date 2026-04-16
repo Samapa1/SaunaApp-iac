@@ -76,7 +76,6 @@ export const get_userReservations: APIGatewayProxyHandler = async (event, contex
         const allReservations: Reservation[] = [];
         while ( sauna <= 5 ) {
             const retrievedItems = await getuserReservations(dateData, sauna);
-            // console.log("Retrieved items:", retrievedItems);
             allReservations.push(...(retrievedItems || []));
             sauna++;
         }
