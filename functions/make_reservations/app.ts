@@ -44,6 +44,14 @@ export const make_reservation: APIGatewayProxyHandler = async (event, context) =
         const dateWithWeekNumber = `${withoutHoursDataReversed[0]}-${withoutHoursDataReversed[1]}-${newWeekNumber}-${withoutHoursDataReversed[2]}-${dateParts[3]}`;
         console.log(dateWithWeekNumber);
 
+        const reservationDateTime = DateTime.fromObject(
+            { year: Number(withoutHoursDataReversed[0]), month: Number(withoutHoursDataReversed[1]), day: Number(withoutHoursDataReversed[2]), hour: Number(dateParts[3]) },
+            { zone: 'Europe/Helsinki' }
+        );
+        if (reservationDateTime < DateTime.now().setZone('Europe/Helsinki')) {
+            return createResponse(400, "Cannot make a reservation in the past");
+        }
+
         const command = new PutCommand({
             TableName: "SaunaTable",
             Item: {
