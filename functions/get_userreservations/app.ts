@@ -12,7 +12,7 @@ interface Reservation {
 }
 
 export const client = DynamoDBDocumentClient.from(new DynamoDBClient({
-    endpoint: 'http://dynamodb:8000'
+    endpoint: process.env.ENDPOINT
 }));
 
 const createResponse = (statusCode: number, message: string | object) => ({

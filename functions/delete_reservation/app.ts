@@ -41,6 +41,14 @@ export const delete_reservation: APIGatewayProxyHandler = async (event, context)
     const newWeekNumber = DateTime.fromISO(withoutHoursData.join('-')).weekNumber;
     const dateWithWeekNumber = `${withoutHoursData[0]}-${withoutHoursData[1]}-${newWeekNumber}-${withoutHoursData[2]}-${dateParts[3]}`;
 
+    const reservationDateTime = DateTime.fromObject(
+        { year: Number(dateParts[0]), month: Number(dateParts[1]), day: Number(dateParts[2]), hour: Number(dateParts[3]) },
+        { zone: 'Europe/Helsinki' }
+    );
+    if (reservationDateTime <= DateTime.now().setZone('Europe/Helsinki')) {
+        return createResponse(400, "Cannot delete a past reservation");
+    }
+
     const command = new DeleteCommand({
         TableName: "SaunaTable",
         Key: {
